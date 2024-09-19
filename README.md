@@ -1,8 +1,22 @@
-# React + Vite
+# Pong Game 🏓
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![License Badge](https://img.shields.io/badge/license-MIT-brightgreen?label=LICENSE)
 
-Currently, two official plugins are available:
+Pong Game is a modern `web-based` version of the classic table tennis game, where `two players` compete to hit the ball with their paddles. This game is designed with a sleek 3D look using the latest technologies, providing an interactive and engaging playing experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**[Play Now!](https://pong-game-dewa.vercel.app/)**
+
+## Techstack
+
+- **React Three Fiber**: A React renderer for Three.js, enabling the creation of 3D objects in web applications with ease and efficiency.
+- **Three.js**: A JavaScript library used to create and display 3D graphics in a web browser.
+
+## Preview
+
+![Preview](public/preview-1.png)
+
+![Preview](public/preview-2.png)
+
+## License
+
+The code is licensed [MIT](LICENSE)
