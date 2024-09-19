@@ -127,14 +127,28 @@ function App() {
       {/* Tampilkan skor dan kontrol hanya jika game sedang dimainkan */}
       {gameStarted && cameraOption && gameMode && (
         <>
-          <div style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', fontSize: '36px', fontWeight: 'bold' }}>
+          <div style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', fontSize: '24px' }}>
             Blue: {scoreBlue}
           </div>
-          <div style={{ position: 'absolute', top: '10px', right: '10px', color: 'white', fontSize: '36px', fontWeight: 'bold' }}>
+          <div style={{ position: 'absolute', top: '10px', right: '10px', color: 'white', fontSize: '24px' }}>
             Red: {scoreRed}
           </div>
-          <img style={{ position: 'absolute', top: '100px', left: '10px' }} src="/key-blue.png" />
-          <img style={{ position: 'absolute', top: '100px', right: '10px' }} src="/key-red.png" />
+          {/* Gambar kontrol untuk Blue */}
+          <img
+            style={{ position: 'absolute', top: '100px', left: '10px', userSelect: 'none', pointerEvents: 'none' }}
+            src="/key-blue.png"
+            draggable="false"
+            alt="Blue Controls"
+          />
+          {/* Gambar kontrol untuk Red hanya muncul di multiplayer */}
+          {gameMode === 'multiplayer' && (
+            <img
+              style={{ position: 'absolute', top: '100px', right: '10px', userSelect: 'none', pointerEvents: 'none' }}
+              src="/key-red.png"
+              draggable="false"
+              alt="Red Controls"
+            />
+          )}
         </>
       )}
 
