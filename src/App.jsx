@@ -1,6 +1,5 @@
 // src/App.jsx
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
 import Paddle from './components/Paddle';
 import Ball from './components/Ball';
 import { useState, useRef } from 'react';
@@ -32,12 +31,12 @@ function App() {
   const updateScore = (scorer) => {
     if (scorer === 'blue') {
       setScoreBlue((prev) => prev + 1);
-      if (scoreBlue + 1 === 10) {
+      if (scoreBlue + 1 === 5) {
         setWinner('Blue');
       }
     } else if (scorer === 'red') {
       setScoreRed((prev) => prev + 1);
-      if (scoreRed + 1 === 10) {
+      if (scoreRed + 1 === 5) {
         setWinner('Red');
       }
     }
@@ -70,7 +69,6 @@ function App() {
               : { position: [0, -20, 15], fov: 50, near: 0.1, far: 1000 } // Kamera alternatif
           }
         >
-          <OrbitControls />
           <ambientLight intensity={0.5} />
           <directionalLight position={[5, 5, 5]} />
 
