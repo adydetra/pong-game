@@ -127,10 +127,10 @@ function App() {
       {/* Tampilkan skor dan kontrol hanya jika game sedang dimainkan */}
       {gameStarted && cameraOption && gameMode && (
         <>
-          <div style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', fontSize: '24px' }}>
+          <div style={{ position: 'absolute', top: '10px', left: '10px', color: 'white', fontSize: '36px', fontWeight: 'bold' }}>
             Blue: {scoreBlue}
           </div>
-          <div style={{ position: 'absolute', top: '10px', right: '10px', color: 'white', fontSize: '24px' }}>
+          <div style={{ position: 'absolute', top: '10px', right: '10px', color: 'white', fontSize: '36px', fontWeight: 'bold' }}>
             Red: {scoreRed}
           </div>
           <img style={{ position: 'absolute', top: '100px', left: '10px' }} src="/key-blue.png" />
