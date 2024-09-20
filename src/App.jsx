@@ -8,7 +8,8 @@ import PlayAgainButton from './components/PlayAgainButton';
 import CameraChoice from './components/CameraChoice';
 import PauseButton from './components/PauseButton';
 import GameModeChoice from './components/GameModeChoice';
-import Countdown from './components/Countdown'; // Import komponen Countdown
+import MaxScoreChoice from './components/MaxScoreChoice'; // Import komponen MaxScoreChoice
+import Countdown from './components/Countdown';
 
 function App() {
   const [scoreBlue, setScoreBlue] = useState(0);
@@ -18,7 +19,8 @@ function App() {
   const [cameraOption, setCameraOption] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [gameMode, setGameMode] = useState(null);
-  const [showCountdown, setShowCountdown] = useState(false); // State untuk countdown
+  const [showCountdown, setShowCountdown] = useState(false);
+  const [maxScore, setMaxScore] = useState(null); // Set initial value to null
 
   const paddleLeft = useRef();
   const paddleRight = useRef();
@@ -32,17 +34,18 @@ function App() {
     setIsPaused(false);
     setGameMode(null);
     setShowCountdown(false);
+    setMaxScore(null); // Reset max score to null
   };
 
   const updateScore = (scorer) => {
     if (scorer === 'blue') {
       setScoreBlue((prev) => prev + 1);
-      if (scoreBlue + 1 === 5) {
+      if (scoreBlue + 1 === maxScore) {
         setWinner('Blue');
       }
     } else if (scorer === 'red') {
       setScoreRed((prev) => prev + 1);
-      if (scoreRed + 1 === 5) {
+      if (scoreRed + 1 === maxScore) {
         setWinner('Red');
       }
     }
@@ -54,12 +57,12 @@ function App() {
 
   const chooseCamera = (option) => {
     setCameraOption(option);
-    setShowCountdown(true); // Tampilkan countdown setelah kamera dipilih
+    setShowCountdown(true); // Show countdown after choosing camera
   };
 
   const onCountdownComplete = () => {
     setShowCountdown(false);
-    setGameStarted(true); // Mulai game setelah countdown selesai
+    setGameStarted(true); // Start game after countdown completes
   };
 
   const togglePause = () => {
@@ -70,9 +73,13 @@ function App() {
     setGameMode(mode);
   };
 
+  const selectMaxScore = (score) => {
+    setMaxScore(score); // Set max score based on selection
+  };
+
   return (
     <>
-      {/* Render game canvas hanya jika kamera dan mode game telah dipilih dan countdown selesai */}
+      {/* Render game canvas only if camera and game mode have been chosen and countdown is complete */}
       {cameraOption && gameMode && !showCountdown && gameStarted && (
         <Canvas
           style={{
@@ -89,7 +96,7 @@ function App() {
           <ambientLight intensity={0.5} />
           <directionalLight position={[5, 5, 5]} />
 
-          {/* Paddle Biru dikendalikan oleh Arrow Keys */}
+          {/* Blue Paddle controlled by Arrow Keys */}
           <Paddle
             position={[-8, 0, 0]}
             color="blue"
@@ -99,7 +106,7 @@ function App() {
             ref={paddleLeft}
           />
 
-          {/* Paddle Merah dikendalikan oleh bot jika singleplayer, manual jika multiplayer */}
+          {/* Red Paddle controlled by bot if singleplayer, manually if multiplayer */}
           <Paddle
             position={[8, 0, 0]}
             color="red"
@@ -110,7 +117,7 @@ function App() {
             ref={paddleRight}
           />
 
-          {/* Bola hanya muncul setelah game dimulai dan tetap saat pause */}
+          {/* Ball only appears when game starts and remains when paused */}
           {gameStarted && !winner && (
             <Ball
               paddleLeft={paddleLeft}
@@ -120,7 +127,7 @@ function App() {
             />
           )}
 
-          {/* Garis Pembatas */}
+          {/* Boundary Lines */}
           <mesh position={[-8.5, 0, 0]}>
             <boxGeometry args={[0.4, 12, 0.4]} />
             <meshStandardMaterial color="white" />
@@ -130,7 +137,7 @@ function App() {
             <meshStandardMaterial color="white" />
           </mesh>
 
-          {/* Garis belakang untuk pembatas */}
+          {/* Back Boundary Lines */}
           <mesh position={[0, 6, 0]}>
             <boxGeometry args={[17, 0.4, 0.4]} />
             <meshStandardMaterial color="white" />
@@ -147,7 +154,7 @@ function App() {
         </Canvas>
       )}
 
-      {/* Tampilkan skor dan kontrol hanya jika game sedang dimainkan dan tidak sedang countdown */}
+      {/* Display score and controls only if game is playing and not in countdown */}
       {gameStarted && cameraOption && gameMode && !showCountdown && (
         <>
           <div
@@ -172,7 +179,7 @@ function App() {
           >
             Red: {scoreRed}
           </div>
-          {/* Gambar kontrol untuk Blue */}
+          {/* Blue Control Image */}
           <img
             style={{
               position: 'absolute',
@@ -185,7 +192,7 @@ function App() {
             draggable="false"
             alt="Blue Controls"
           />
-          {/* Gambar kontrol untuk Red hanya muncul di multiplayer */}
+          {/* Red Control Image only in multiplayer */}
           {gameMode === 'multiplayer' && (
             <img
               style={{
@@ -203,24 +210,31 @@ function App() {
         </>
       )}
 
-      {/* Tampilkan modal pemilihan mode game jika belum dipilih */}
+      {/* Display max score selection if game mode is chosen but max score is not */}
+      {gameMode && !maxScore && (
+        <MaxScoreChoice onSelect={selectMaxScore} />
+      )}
+
+      {/* Display game mode selection if not chosen */}
       {!gameMode && gameStarted && <GameModeChoice onSelect={selectGameMode} />}
 
-      {/* Tampilkan modal overlay untuk memilih kamera */}
-      {!cameraOption && gameStarted && gameMode && <CameraChoice onChoose={chooseCamera} />}
+      {/* Display camera selection if game mode is chosen */}
+      {!cameraOption && gameStarted && gameMode && maxScore && (
+        <CameraChoice onChoose={chooseCamera} />
+      )}
 
-      {/* Tampilkan modal overlay dan tombol Start Game */}
+      {/* Display start button if game has not started */}
       {!gameStarted && !winner && <StartButton onClick={startGame} />}
 
-      {/* Tampilkan tombol Pause jika game sudah dimulai dan tidak sedang countdown */}
+      {/* Display pause button if game is playing and not in countdown */}
       {cameraOption && !winner && !showCountdown && (
         <PauseButton isPaused={isPaused} onClick={togglePause} />
       )}
 
-      {/* Tampilkan pesan pemenang dan tombol "Play Again" */}
+      {/* Display winner message and play again button */}
       {winner && <PlayAgainButton winner={winner} onClick={resetGame} />}
 
-      {/* Tampilkan countdown jika sudah memilih kamera */}
+      {/* Display countdown if camera is chosen */}
       {showCountdown && <Countdown onComplete={onCountdownComplete} />}
     </>
   );
