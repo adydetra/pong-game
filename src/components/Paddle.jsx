@@ -50,6 +50,7 @@ const Paddle = forwardRef(
       gameStarted,
       isPaused,
       ballPositionRef,
+      resetSignal,
     },
     ref,
   ) => {
@@ -66,6 +67,14 @@ const Paddle = forwardRef(
 
     const errorOffsetRef = useRef(0);
     const errorTimerRef = useRef(0);
+
+    useEffect(() => {
+      if (resetSignal == null) return;
+      currentYRef.current = initialY;
+      setCurrentY(initialY);
+      errorOffsetRef.current = 0;
+      errorTimerRef.current = 0;
+    }, [resetSignal, initialY]);
 
     useEffect(() => {
       const handleKeyDown = (e) => {

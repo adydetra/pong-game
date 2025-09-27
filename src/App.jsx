@@ -24,6 +24,7 @@ function App() {
   const [maxScore, setMaxScore] = useState(null); // Set initial value to null
   const [difficulty, setDifficulty] = useState(null);
   const [postScoreCountdown, setPostScoreCountdown] = useState(false);
+  const [paddleResetToken, setPaddleResetToken] = useState(0);
 
   const paddleLeft = useRef();
   const paddleRight = useRef();
@@ -41,10 +42,12 @@ function App() {
     setMaxScore(null); // Reset max score to null
     setDifficulty(null);
     setPostScoreCountdown(false);
+    setPaddleResetToken((prev) => prev + 1);
   };
 
   const updateScore = (scorer) => {
     setPostScoreCountdown(true);
+    setPaddleResetToken((prev) => prev + 1);
     if (scorer === 'blue') {
       setScoreBlue((prev) => prev + 1);
       if (scoreBlue + 1 === maxScore) {
@@ -97,15 +100,18 @@ function App() {
   const needsDifficulty = gameMode === 'singleplayer';
 
   const hasDifficulty = !needsDifficulty || !!difficulty;
+  const overlayActive = showCountdown || postScoreCountdown;
+
   return (
     <>
       {/* Render game canvas only if camera and game mode have been chosen and countdown is complete */}
-      {cameraOption && gameMode && hasDifficulty && !showCountdown && !postScoreCountdown && gameStarted && (
+      {cameraOption && gameMode && hasDifficulty && gameStarted && !winner && (
         <Canvas
           style={{
             width: '100vw',
             height: '100vh',
             background: 'linear-gradient(135deg, #17AEEB, #4682B4)',
+            filter: overlayActive ? 'blur(5px)' : 'none',
           }}
           camera={
             cameraOption === 'default'
@@ -122,7 +128,8 @@ function App() {
             color="blue"
             isPlayer
             gameStarted={gameStarted}
-            isPaused={isPaused}
+            isPaused={isPaused || overlayActive}
+            resetSignal={paddleResetToken}
             ref={paddleLeft}
           />
 
@@ -131,10 +138,11 @@ function App() {
             color="red"
             isRedPlayer
             gameStarted={gameStarted}
-            isPaused={isPaused || postScoreCountdown}
+            isPaused={isPaused || overlayActive}
             isBot={gameMode === 'singleplayer'}
             botDifficulty={difficulty}
             ballPositionRef={ballPositionRef}
+            resetSignal={paddleResetToken}
             ref={paddleRight}
           />
 
@@ -144,7 +152,7 @@ function App() {
               paddleLeft={paddleLeft}
               paddleRight={paddleRight}
               updateScore={updateScore}
-              isPaused={isPaused || postScoreCountdown}
+              isPaused={isPaused || overlayActive}
               ballPositionRef={ballPositionRef}
             />
           )}
@@ -177,7 +185,7 @@ function App() {
       )}
 
       {/* Display score and controls only if game is playing and not in countdown */}
-      {gameStarted && cameraOption && gameMode && hasDifficulty && !showCountdown && !postScoreCountdown && (
+      {gameStarted && cameraOption && gameMode && hasDifficulty && !overlayActive && (
         <>
           <div
             style={{
@@ -283,7 +291,7 @@ function App() {
       {!gameStarted && !winner && <StartButton onClick={startGame} />}
 
       {/* Display pause button if game is playing and not in countdown */}
-      {cameraOption && !winner && !showCountdown && !postScoreCountdown && (
+      {cameraOption && !winner && !overlayActive && (
         <PauseButton isPaused={isPaused} onClick={togglePause} />
       )}
 

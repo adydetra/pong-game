@@ -20,20 +20,24 @@ function Countdown({ onComplete, seconds = 5 }) {
     <div
       style={{
         position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: '48px',
-        color: 'black',
+        color: '#fff',
         fontWeight: 'bold',
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
       }}
     >
       {count}
-      <div style={{ marginTop: '20px', fontSize: '24px', color: '#333' }}>
+      <div style={{ marginTop: '20px', fontSize: '24px', color: '#f1f1f1' }}>
         Get Ready...
       </div>
     </div>

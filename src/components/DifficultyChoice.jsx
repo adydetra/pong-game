@@ -18,10 +18,6 @@ function DifficultyChoice({ onSelect, onBack }) {
       }}
     >
       <h1>Select Difficulty</h1>
-      <p style={{ maxWidth: '480px', lineHeight: 1.4 }}>
-        Choose how smart the red paddle bot should be. Higher difficulty means faster reaction
-        and fewer mistakes.
-      </p>
       <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
         <button
           onClick={() => onSelect('easy')}
@@ -44,7 +40,33 @@ function DifficultyChoice({ onSelect, onBack }) {
       </div>
       {onBack && (
         <div style={{ marginTop: '16px' }}>
-          <button onClick={onBack} style={{ padding: '8px 16px' }}>
+          <button
+            onClick={onBack}
+            style={{
+              padding: '8px 16px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              backgroundColor: '#d32f2f',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
             Back
           </button>
         </div>
