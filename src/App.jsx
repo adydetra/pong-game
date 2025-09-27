@@ -24,6 +24,7 @@ function App() {
 
   const paddleLeft = useRef();
   const paddleRight = useRef();
+  const ballPositionRef = useRef({ x: 0, y: 0 });
 
   const resetGame = () => {
     setScoreBlue(0);
@@ -114,6 +115,7 @@ function App() {
             gameStarted={gameStarted}
             isPaused={isPaused}
             isBot={gameMode === 'singleplayer'}
+            ballPositionRef={ballPositionRef}
             ref={paddleRight}
           />
 
@@ -124,6 +126,7 @@ function App() {
               paddleRight={paddleRight}
               updateScore={updateScore}
               isPaused={isPaused}
+              ballPositionRef={ballPositionRef}
             />
           )}
 

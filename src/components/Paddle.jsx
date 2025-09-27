@@ -2,8 +2,8 @@
 import { forwardRef, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 
-const Paddle = forwardRef(({ position, color, isPlayer = false, isRedPlayer = false, isBot = false, gameStarted, isPaused }, ref) => {
-  const [currentY, setCurrentY] = useState(0); // Posisi Y saat ini
+const Paddle = forwardRef(({ position, color, isPlayer = false, isRedPlayer = false, isBot = false, gameStarted, isPaused, ballPositionRef }, ref) => {
+  const [currentY, setCurrentY] = useState(position[1] ?? 0); // Posisi Y saat ini
   const moveSpeed = 0.1; // Kecepatan gerakan paddle saat tombol ditekan
   const upperLimit = 4.3; // Batas atas yang diperluas agar bisa mencapai border
   const lowerLimit = -4.3; // Batas bawah yang diperluas agar bisa mencapai border
@@ -11,9 +11,6 @@ const Paddle = forwardRef(({ position, color, isPlayer = false, isRedPlayer = fa
   // State untuk menampung tombol mana yang sedang ditekan
   const [upPressed, setUpPressed] = useState(false);
   const [downPressed, setDownPressed] = useState(false);
-  
-  // State untuk arah gerakan bot
-  const [botDirection, setBotDirection] = useState(4); // 1 untuk naik, -1 untuk turun
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -68,15 +65,22 @@ const Paddle = forwardRef(({ position, color, isPlayer = false, isRedPlayer = fa
   }, [isPlayer, isRedPlayer, gameStarted, isPaused]);
 
   useFrame(() => {
-    // Logika bot untuk gerakan acak
-    if (isBot && gameStarted && !isPaused) {
-      // Update posisi paddle dengan arah gerakan bot
+    // Logika bot mengikuti posisi bola
+    if (isBot && gameStarted && !isPaused && ballPositionRef?.current) {
+      const { y: ballY = 0, vx = 0, x: ballX = 0 } = ballPositionRef.current;
+      const chasingBall = vx > 0 && ballX > 0; // Hanya kejar bola saat bergerak menuju paddle merah
+      const targetY = chasingBall ? ballY : 0; // Kembali ke tengah saat bola menjauh
+      const botStep = 0.12; // Kecepatan langkah bot per frame
+
       setCurrentY((prevY) => {
-        let newY = prevY + botDirection * 0.05; // Gerakkan paddle sedikit ke atas atau bawah
-        if (newY >= upperLimit || newY <= lowerLimit) {
-          setBotDirection(-botDirection); // Ubah arah jika mencapai batas
+        const diff = targetY - prevY;
+        if (Math.abs(diff) < 0.02) {
+          return prevY; // Tidak perlu update jika jarak sangat kecil
         }
-        return Math.max(lowerLimit, Math.min(newY, upperLimit)); // Pastikan tetap di batas
+
+        const step = Math.sign(diff) * Math.min(Math.abs(diff), botStep);
+        const newY = prevY + step;
+        return Math.max(lowerLimit, Math.min(newY, upperLimit));
       });
     }
 
