@@ -1,4 +1,4 @@
-function MaxScoreChoice({ onSelect }) {
+function MaxScoreChoice({ onSelect, onBack }) {
   return (
     <div
       style={{
@@ -37,6 +37,13 @@ function MaxScoreChoice({ onSelect }) {
           20
         </button>
       </div>
+      {onBack && (
+        <div style={{ marginTop: '20px' }}>
+          <button onClick={onBack} style={{ padding: '8px 16px' }}>
+            Back
+          </button>
+        </div>
+      )}
     </div>
   );
 }

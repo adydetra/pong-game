@@ -1,5 +1,5 @@
 // src/components/CameraChoice.jsx
-function CameraChoice({ onChoose }) {
+function CameraChoice({ onChoose, onBack }) {
   return (
     <div style={{
       position: 'absolute', 
@@ -22,6 +22,13 @@ function CameraChoice({ onChoose }) {
         <button onClick={() => onChoose('alternative')} style={{ padding: '10px 20px', fontSize: '18px' }}>
           Alternative Camera
         </button>
+        {onBack && (
+          <div style={{ marginTop: '20px' }}>
+            <button onClick={onBack} style={{ padding: '8px 16px' }}>
+              Back
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

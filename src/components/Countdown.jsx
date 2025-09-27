@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 
-function Countdown({ onComplete }) {
-  const [count, setCount] = useState(5);
+function Countdown({ onComplete, seconds = 5 }) {
+  const [count, setCount] = useState(seconds);
+
+  useEffect(() => {
+    setCount(seconds);
+  }, [seconds]);
 
   useEffect(() => {
     if (count > 0) {

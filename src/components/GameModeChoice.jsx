@@ -1,5 +1,5 @@
 // src/components/GameModeChoice.jsx
-function GameModeChoice({ onSelect }) {
+function GameModeChoice({ onSelect, onBack }) {
   return (
     <div style={{
       position: 'absolute', 
@@ -22,6 +22,13 @@ function GameModeChoice({ onSelect }) {
         <button onClick={() => onSelect('multiplayer')} style={{ padding: '10px 20px', margin: '10px' }}>
           Multiplayer
         </button>
+        {onBack && (
+          <div style={{ marginTop: '20px' }}>
+            <button onClick={onBack} style={{ padding: '8px 16px' }}>
+              Back
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

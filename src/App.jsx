@@ -23,6 +23,7 @@ function App() {
   const [showCountdown, setShowCountdown] = useState(false);
   const [maxScore, setMaxScore] = useState(null); // Set initial value to null
   const [difficulty, setDifficulty] = useState(null);
+  const [postScoreCountdown, setPostScoreCountdown] = useState(false);
 
   const paddleLeft = useRef();
   const paddleRight = useRef();
@@ -39,9 +40,11 @@ function App() {
     setShowCountdown(false);
     setMaxScore(null); // Reset max score to null
     setDifficulty(null);
+    setPostScoreCountdown(false);
   };
 
   const updateScore = (scorer) => {
+    setPostScoreCountdown(true);
     if (scorer === 'blue') {
       setScoreBlue((prev) => prev + 1);
       if (scoreBlue + 1 === maxScore) {
@@ -69,6 +72,10 @@ function App() {
     setGameStarted(true); // Start game after countdown completes
   };
 
+  const onPostScoreCountdownComplete = () => {
+    setPostScoreCountdown(false);
+  };
+
   const togglePause = () => {
     setIsPaused((prev) => !prev);
   };
@@ -90,11 +97,10 @@ function App() {
   const needsDifficulty = gameMode === 'singleplayer';
 
   const hasDifficulty = !needsDifficulty || !!difficulty;
-
   return (
     <>
       {/* Render game canvas only if camera and game mode have been chosen and countdown is complete */}
-      {cameraOption && gameMode && hasDifficulty && !showCountdown && gameStarted && (
+      {cameraOption && gameMode && hasDifficulty && !showCountdown && !postScoreCountdown && gameStarted && (
         <Canvas
           style={{
             width: '100vw',
@@ -120,13 +126,12 @@ function App() {
             ref={paddleLeft}
           />
 
-          {/* Red Paddle controlled by bot if singleplayer, manually if multiplayer */}
           <Paddle
             position={[8, 0, 0]}
             color="red"
             isRedPlayer
             gameStarted={gameStarted}
-            isPaused={isPaused}
+            isPaused={isPaused || postScoreCountdown}
             isBot={gameMode === 'singleplayer'}
             botDifficulty={difficulty}
             ballPositionRef={ballPositionRef}
@@ -139,7 +144,7 @@ function App() {
               paddleLeft={paddleLeft}
               paddleRight={paddleRight}
               updateScore={updateScore}
-              isPaused={isPaused}
+              isPaused={isPaused || postScoreCountdown}
               ballPositionRef={ballPositionRef}
             />
           )}
@@ -172,7 +177,7 @@ function App() {
       )}
 
       {/* Display score and controls only if game is playing and not in countdown */}
-      {gameStarted && cameraOption && gameMode && hasDifficulty && !showCountdown && (
+      {gameStarted && cameraOption && gameMode && hasDifficulty && !showCountdown && !postScoreCountdown && (
         <>
           <div
             style={{
@@ -229,25 +234,56 @@ function App() {
 
       {/* Display max score selection if game mode is chosen but max score is not */}
       {gameMode && hasDifficulty && !maxScore && (
-        <MaxScoreChoice onSelect={selectMaxScore} />
+        <MaxScoreChoice
+          onSelect={selectMaxScore}
+          onBack={() => {
+            if (gameMode === 'singleplayer') {
+              setDifficulty(null);
+            } else {
+              setGameMode(null);
+            }
+          }}
+        />
       )}
 
       {/* Display difficulty selection for singleplayer before max score */}
-      {needsDifficulty && !difficulty && <DifficultyChoice onSelect={selectDifficulty} />}
+      {needsDifficulty && !difficulty && (
+        <DifficultyChoice onSelect={selectDifficulty} onBack={() => setGameMode(null)} />
+      )}
 
       {/* Display game mode selection if not chosen */}
-      {!gameMode && gameStarted && <GameModeChoice onSelect={selectGameMode} />}
+      {!gameMode && gameStarted && (
+        <GameModeChoice
+          onSelect={selectGameMode}
+          onBack={() => {
+            setGameStarted(false);
+            setCameraOption(null);
+            setShowCountdown(false);
+            setDifficulty(null);
+            setMaxScore(null);
+            setPostScoreCountdown(false);
+          }}
+        />
+      )}
 
       {/* Display camera selection if game mode is chosen */}
       {!cameraOption && gameStarted && gameMode && maxScore && hasDifficulty && (
-        <CameraChoice onChoose={chooseCamera} />
+        <CameraChoice
+          onChoose={chooseCamera}
+          onBack={() => {
+            setCameraOption(null);
+            setShowCountdown(false);
+            setPostScoreCountdown(false);
+            setMaxScore(null);
+          }}
+        />
       )}
 
       {/* Display start button if game has not started */}
       {!gameStarted && !winner && <StartButton onClick={startGame} />}
 
       {/* Display pause button if game is playing and not in countdown */}
-      {cameraOption && !winner && !showCountdown && (
+      {cameraOption && !winner && !showCountdown && !postScoreCountdown && (
         <PauseButton isPaused={isPaused} onClick={togglePause} />
       )}
 
@@ -256,6 +292,11 @@ function App() {
 
       {/* Display countdown if camera is chosen */}
       {showCountdown && <Countdown onComplete={onCountdownComplete} />}
+
+      {/* Post-score countdown */}
+      {postScoreCountdown && !winner && (
+        <Countdown key={`score-${scoreBlue}-${scoreRed}`} seconds={5} onComplete={onPostScoreCountdownComplete} />
+      )}
     </>
   );
 }

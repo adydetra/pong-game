@@ -1,4 +1,4 @@
-function DifficultyChoice({ onSelect }) {
+function DifficultyChoice({ onSelect, onBack }) {
   return (
     <div
       style={{
@@ -42,6 +42,13 @@ function DifficultyChoice({ onSelect }) {
           Hard
         </button>
       </div>
+      {onBack && (
+        <div style={{ marginTop: '16px' }}>
+          <button onClick={onBack} style={{ padding: '8px 16px' }}>
+            Back
+          </button>
+        </div>
+      )}
     </div>
   );
 }
