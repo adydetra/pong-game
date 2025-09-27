@@ -7,10 +7,15 @@ function Ball({ paddleLeft, paddleRight, updateScore, isPaused, ballPositionRef 
 
   // Fungsi untuk menghasilkan arah kecepatan acak
   const getRandomDirection = () => {
-    // Menghasilkan nilai acak antara -1 dan 1 untuk X dan Y, kemudian menormalkan
-    const directionX = Math.random() < 0.5 ? -1 : 1; // Tentukan apakah X positif atau negatif
-    const directionY = Math.random() < 0.5 ? -1 : 1; // Tentukan apakah Y positif atau negatif
-    return { x: directionX * 0.1, y: directionY * 0.04 }; // Atur besar kecepatan
+    const horizontalSpeed = 0.1 + Math.random() * 0.05; // 0.10 - 0.15
+    const verticalSpeed = 0.03 + Math.random() * 0.05; // 0.03 - 0.08
+    const directionX = Math.random() < 0.5 ? -1 : 1;
+    const directionY = Math.random() < 0.5 ? -1 : 1;
+
+    return {
+      x: directionX * horizontalSpeed,
+      y: directionY * verticalSpeed,
+    };
   };
 
   // Inisialisasi velocity dengan arah acak saat game pertama kali dimulai
